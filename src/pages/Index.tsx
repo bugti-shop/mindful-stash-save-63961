@@ -7,6 +7,8 @@ import EmotionalInsights from '@/components/EmotionalInsights';
 import { BackupSync } from '@/components/BackupSync';
 import { NotificationSettings } from '@/components/NotificationSettings';
 import { SettingsDialog } from '@/components/SettingsDialog';
+import { useSubscription, FREE_LIMITS } from '@/contexts/SubscriptionContext';
+import { useToast } from '@/hooks/use-toast';
 import { storage } from '@/lib/storage';
 import { formatCurrency } from '@/lib/utils';
 import logoImg from '@/assets/logo.png';
@@ -53,13 +55,15 @@ interface TransactionRecord {
 }
 
 const Index = () => {
+  const { tier, canUseFeature } = useSubscription();
+  const { toast } = useToast();
   const [jars, setJars] = useState<Jar[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedJar, setSelectedJar] = useState<Jar | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const [newJar, setNewJar] = useState({ name: '', target: '', currency: '$', categoryId: 0, targetDate: '' });
+  const [newJar, setNewJar] = useState({ name: '', target: '', currency: '€', categoryId: 0, targetDate: '' });
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [newCategory, setNewCategory] = useState({ name: '', icon: '' });
   const [addAmount, setAddAmount] = useState('');
@@ -189,6 +193,16 @@ const Index = () => {
   };
 
   const createJar = () => {
+    // Feature gate: Check jar limit for free users
+    if (tier === 'free' && jars.length >= FREE_LIMITS.maxJars) {
+      toast({
+        title: 'Jar Limit Reached',
+        description: `Free plan is limited to ${FREE_LIMITS.maxJars} jars. Upgrade to Premium for unlimited jars!`,
+        variant: 'destructive',
+      });
+      return;
+    }
+
     if (newJar.name && newJar.target && categories.length > 0) {
       const jar: Jar = {
         id: Date.now(),
@@ -205,12 +219,22 @@ const Index = () => {
         createdAt: new Date().toISOString(),
       };
       setJars([...jars, jar]);
-      setNewJar({ name: '', target: '', currency: '$', categoryId: categories[0].id, targetDate: '' });
+      setNewJar({ name: '', target: '', currency: '€', categoryId: categories[0].id, targetDate: '' });
       setShowCreateModal(false);
     }
   };
 
   const createCategory = () => {
+    // Feature gate: Check category limit for free users
+    if (tier === 'free' && categories.length >= FREE_LIMITS.maxCategories) {
+      toast({
+        title: 'Category Limit Reached',
+        description: `Free plan is limited to ${FREE_LIMITS.maxCategories} categories. Upgrade to Premium for unlimited categories!`,
+        variant: 'destructive',
+      });
+      return;
+    }
+
     if (newCategory.name) {
       const category: Category = {
         id: Date.now(),
@@ -290,6 +314,16 @@ const Index = () => {
   };
 
   const addNote = () => {
+    // Feature gate: Check sticky note limit for free users
+    if (tier === 'free' && notes.length >= FREE_LIMITS.maxStickyNotes) {
+      toast({
+        title: 'Sticky Note Limit Reached',
+        description: `Free plan is limited to ${FREE_LIMITS.maxStickyNotes} sticky notes. Upgrade to Premium for unlimited notes!`,
+        variant: 'destructive',
+      });
+      return;
+    }
+
     if (newNote.text.trim()) {
       setNotes([...notes, { id: Date.now(), text: newNote.text, color: newNote.color }]);
       setNewNote({ text: '', color: 'yellow' });
@@ -442,11 +476,7 @@ const Index = () => {
               </h1>
             </div>
             <div className="flex items-center gap-2">
-              <NotificationSettings />
-              <BackupSync 
-                onExport={() => {}} 
-                onImport={() => {}}
-              />
+              <SettingsDialog />
               <button
                 onClick={() => setDarkMode(!darkMode)}
                 className={`p-2 sm:p-3 rounded-full ${darkMode ? 'bg-gray-800/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg hover:shadow-xl transition-all border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}
@@ -652,7 +682,7 @@ const Index = () => {
                 <div className="flex items-center justify-center py-8">
                   <SavingsButton onClick={() => {
                     if (categories.length > 0) {
-                      setNewJar({ name: '', target: '', currency: '$', categoryId: categories[0].id, targetDate: '' });
+                      setNewJar({ name: '', target: '', currency: '€', categoryId: categories[0].id, targetDate: '' });
                     }
                     setShowCreateModal(true);
                   }} size="default" className="whitespace-nowrap text-sm sm:text-base w-auto">
@@ -778,30 +808,46 @@ const Index = () => {
                   Based on your target date
                 </p>
               )}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-3 text-center`}>
-                  <p className={`text-xs ${textSecondary} mb-1`}>Daily</p>
-                  <p className={`text-xl font-bold ${textColor}`}>
-                    {selectedJar.currency || '$'}{formatCurrency(getInvestmentPlan(selectedJar).daily)}
-                  </p>
+              {tier === 'free' ? (
+                <div className="space-y-3">
+                  <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-4 text-center`}>
+                    <p className={`text-xs ${textSecondary} mb-1`}>Monthly</p>
+                    <p className={`text-2xl font-bold ${textColor}`}>
+                      {selectedJar.currency || '€'}{formatCurrency(getInvestmentPlan(selectedJar).monthly)}
+                    </p>
+                  </div>
+                  <div className={`${darkMode ? 'bg-gray-700/50' : 'bg-gray-100'} rounded-xl p-4 border-2 border-dashed border-primary/30`}>
+                    <p className="text-center text-sm text-primary font-medium">
+                      💎 Unlock Daily & Weekly calculations with Premium
+                    </p>
+                  </div>
                 </div>
-                <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-3 text-center`}>
-                  <p className={`text-xs ${textSecondary} mb-1`}>Weekly</p>
-                  <p className={`text-xl font-bold ${textColor}`}>
-                    {selectedJar.currency || '$'}{formatCurrency(getInvestmentPlan(selectedJar).weekly)}
-                  </p>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-3 text-center`}>
+                    <p className={`text-xs ${textSecondary} mb-1`}>Daily</p>
+                    <p className={`text-xl font-bold ${textColor}`}>
+                      {selectedJar.currency || '€'}{formatCurrency(getInvestmentPlan(selectedJar).daily)}
+                    </p>
+                  </div>
+                  <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-3 text-center`}>
+                    <p className={`text-xs ${textSecondary} mb-1`}>Weekly</p>
+                    <p className={`text-xl font-bold ${textColor}`}>
+                      {selectedJar.currency || '€'}{formatCurrency(getInvestmentPlan(selectedJar).weekly)}
+                    </p>
+                  </div>
+                  <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-3 text-center`}>
+                    <p className={`text-xs ${textSecondary} mb-1`}>Monthly</p>
+                    <p className={`text-xl font-bold ${textColor}`}>
+                      {selectedJar.currency || '€'}{formatCurrency(getInvestmentPlan(selectedJar).monthly)}
+                    </p>
+                  </div>
                 </div>
-                <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-3 text-center`}>
-                  <p className={`text-xs ${textSecondary} mb-1`}>Monthly</p>
-                  <p className={`text-xl font-bold ${textColor}`}>
-                    {selectedJar.currency || '$'}{formatCurrency(getInvestmentPlan(selectedJar).monthly)}
-                  </p>
-                </div>
-              </div>
+              )}
               <p className={`text-xs ${textSecondary} text-center mt-3`}>
                 {selectedJar.targetDate 
-                  ? `Save these amounts to reach your ${selectedJar.currency || '$'}${formatCurrency(selectedJar.target)} goal by your target date`
-                  : `Projected amounts to reach your ${selectedJar.currency || '$'}${formatCurrency(selectedJar.target)} goal`
+                  ? `Save these amounts to reach your ${selectedJar.currency || '€'}${formatCurrency(selectedJar.target)} goal by your target date`
+                  : `Projected amounts to reach your ${selectedJar.currency || '€'}${formatCurrency(selectedJar.target)} goal`
                 }
               </p>
             </div>
@@ -905,27 +951,44 @@ const Index = () => {
                 </div>
                 <div className="mb-4">
                   <label className={`block text-sm font-medium mb-2 ${textColor}`}>Currency Symbol</label>
-                  <select
-                    value={newJar.currency}
-                    onChange={(e) => setNewJar({ ...newJar, currency: e.target.value })}
-                    className={`w-full px-4 py-3 rounded-xl border-2 border-primary focus:outline-none ${
-                      darkMode ? 'bg-gray-700 text-white' : ''
-                    }`}
-                  >
-                    <option value="$">$ (USD - Dollar)</option>
-                    <option value="€">€ (EUR - Euro)</option>
-                    <option value="£">£ (GBP - Pound)</option>
-                    <option value="¥">¥ (JPY/CNY - Yen/Yuan)</option>
-                    <option value="₹">₹ (INR - Rupee)</option>
-                    <option value="₽">₽ (RUB - Ruble)</option>
-                    <option value="₩">₩ (KRW - Won)</option>
-                    <option value="PKR">PKR (Pakistani Rupee)</option>
-                    <option value="AED">AED (UAE Dirham)</option>
-                    <option value="SAR">SAR (Saudi Riyal)</option>
-                    <option value="CHF">CHF (Swiss Franc)</option>
-                    <option value="CAD">CAD (Canadian Dollar)</option>
-                    <option value="AUD">AUD (Australian Dollar)</option>
-                  </select>
+                  {tier === 'free' ? (
+                    <>
+                      <select
+                        value="€"
+                        disabled
+                        className={`w-full px-4 py-3 rounded-xl border-2 border-primary focus:outline-none ${
+                          darkMode ? 'bg-gray-700 text-white opacity-60' : 'bg-gray-100 opacity-60'
+                        }`}
+                      >
+                        <option value="€">€ (EUR - Euro)</option>
+                      </select>
+                      <p className={`text-xs ${textSecondary} mt-1`}>
+                        💎 Premium members can choose from 12+ currencies
+                      </p>
+                    </>
+                  ) : (
+                    <select
+                      value={newJar.currency}
+                      onChange={(e) => setNewJar({ ...newJar, currency: e.target.value })}
+                      className={`w-full px-4 py-3 rounded-xl border-2 border-primary focus:outline-none ${
+                        darkMode ? 'bg-gray-700 text-white' : ''
+                      }`}
+                    >
+                      <option value="$">$ (USD - Dollar)</option>
+                      <option value="€">€ (EUR - Euro)</option>
+                      <option value="£">£ (GBP - Pound)</option>
+                      <option value="¥">¥ (JPY/CNY - Yen/Yuan)</option>
+                      <option value="₹">₹ (INR - Rupee)</option>
+                      <option value="₽">₽ (RUB - Ruble)</option>
+                      <option value="₩">₩ (KRW - Won)</option>
+                      <option value="PKR">PKR (Pakistani Rupee)</option>
+                      <option value="AED">AED (UAE Dirham)</option>
+                      <option value="SAR">SAR (Saudi Riyal)</option>
+                      <option value="CHF">CHF (Swiss Franc)</option>
+                      <option value="CAD">CAD (Canadian Dollar)</option>
+                      <option value="AUD">AUD (Australian Dollar)</option>
+                    </select>
+                  )}
                 </div>
                 <div className="mb-4">
                   <label className={`block text-sm font-medium mb-2 ${textColor}`}>Target Date (Optional)</label>
@@ -1059,9 +1122,20 @@ const Index = () => {
         <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] flex items-center justify-center p-4 z-40">
           <div className={`${cardBg} rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl max-h-[80vh] overflow-y-auto`}>
             <h3 className={`text-xl sm:text-2xl font-bold mb-6 ${textColor}`}>Transaction Records - {selectedJar.name}</h3>
+            {tier === 'free' && (
+              <p className={`text-xs ${textSecondary} mb-4 text-center`}>
+                📅 Free plan shows last 30 days. Upgrade to Premium for unlimited history!
+              </p>
+            )}
             {selectedJar.records && selectedJar.records.length > 0 ? (
               <div className="space-y-3">
-                {selectedJar.records.map(record => {
+                {selectedJar.records
+                  .filter(record => {
+                    if (tier === 'premium') return true;
+                    const daysDiff = (new Date().getTime() - new Date(record.date).getTime()) / (1000 * 60 * 60 * 24);
+                    return daysDiff <= FREE_LIMITS.transactionHistoryDays;
+                  })
+                  .map(record => {
                   const recordDate = new Date(record.date);
                   return (
                     <div
@@ -1075,7 +1149,7 @@ const Index = () => {
                       <div className="flex justify-between items-center">
                         <div>
                           <p className={`font-bold ${record.type === 'saved' ? 'text-green-600' : 'text-red-600'}`}>
-                            {record.type === 'saved' ? '+ $' : '- $'}{formatCurrency(record.amount)}
+                            {record.type === 'saved' ? '+ ' : '- '}{selectedJar.currency || '€'}{formatCurrency(record.amount)}
                           </p>
                           <p className={`text-sm ${textSecondary}`}>
                             {recordDate.toLocaleDateString('en-US', { 
