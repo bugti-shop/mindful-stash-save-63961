@@ -6,6 +6,7 @@ import SavingsChart from '@/components/SavingsChart';
 import EmotionalInsights from '@/components/EmotionalInsights';
 import { BackupSync } from '@/components/BackupSync';
 import { NotificationSettings } from '@/components/NotificationSettings';
+import { SettingsDialog } from '@/components/SettingsDialog';
 import { storage } from '@/lib/storage';
 import { formatCurrency } from '@/lib/utils';
 import logoImg from '@/assets/logo.png';
