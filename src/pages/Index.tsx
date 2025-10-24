@@ -489,8 +489,18 @@ const Index = () => {
             <div className="flex items-center gap-2">
               {tier === 'premium' && (
                 <BackupSync 
-                  onExport={() => {}} 
-                  onImport={() => {}} 
+                  onExport={() => {
+                    toast({
+                      title: 'Backup Complete',
+                      description: 'Your data has been backed up successfully.',
+                    });
+                  }} 
+                  onImport={() => {
+                    toast({
+                      title: 'Data Restored',
+                      description: 'Your backup has been restored.',
+                    });
+                  }} 
                 />
               )}
               <SettingsDialog />

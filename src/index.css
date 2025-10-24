@@ -64,7 +64,7 @@ All colors MUST be HSL.
     --primary: 214 100% 50%;
     --primary-dark: 214 100% 42%;
     --primary-darker: 214 100% 34%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
@@ -97,7 +97,7 @@ All colors MUST be HSL.
     --primary: 214 100% 50%;
     --primary-dark: 214 100% 42%;
     --primary-darker: 214 100% 34%;
-    --primary-foreground: 210 100% 10%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 210 80% 15%;
     --secondary-foreground: 195 100% 95%;
     --muted: 210 70% 12%;
@@ -130,7 +130,7 @@ All colors MUST be HSL.
     --primary: 214 100% 50%;
     --primary-dark: 214 100% 42%;
     --primary-darker: 214 100% 34%;
-    --primary-foreground: 140 80% 10%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 140 60% 15%;
     --secondary-foreground: 140 40% 95%;
     --muted: 140 50% 12%;
@@ -163,7 +163,7 @@ All colors MUST be HSL.
     --primary: 214 100% 50%;
     --primary-dark: 214 100% 42%;
     --primary-darker: 214 100% 34%;
-    --primary-foreground: 15 80% 10%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 15 70% 15%;
     --secondary-foreground: 30 90% 95%;
     --muted: 15 60% 12%;
@@ -196,7 +196,7 @@ All colors MUST be HSL.
     --primary: 214 100% 50%;
     --primary-dark: 214 100% 42%;
     --primary-darker: 214 100% 34%;
-    --primary-foreground: 340 60% 12%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 340 45% 18%;
     --secondary-foreground: 340 30% 95%;
     --muted: 340 35% 15%;
@@ -229,7 +229,7 @@ All colors MUST be HSL.
     --primary: 214 100% 50%;
     --primary-dark: 214 100% 42%;
     --primary-darker: 214 100% 34%;
-    --primary-foreground: 250 75% 10%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 250 55% 15%;
     --secondary-foreground: 250 30% 95%;
     --muted: 250 45% 12%;
