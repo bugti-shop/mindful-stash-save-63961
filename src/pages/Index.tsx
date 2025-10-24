@@ -62,7 +62,7 @@ const Index = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedJar, setSelectedJar] = useState<Jar | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState('light');
   const [newJar, setNewJar] = useState({ name: '', target: '', currency: '€', categoryId: 0, targetDate: '' });
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [newCategory, setNewCategory] = useState({ name: '', icon: '' });
@@ -88,17 +88,37 @@ const Index = () => {
   const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
 
+  // Theme cycling: light -> ocean -> forest -> sunset -> midnight -> light
+  const themes = ['light', 'ocean', 'forest', 'sunset', 'midnight'];
+  
+  const cycleTheme = () => {
+    const currentIndex = themes.indexOf(currentTheme);
+    const nextIndex = (currentIndex + 1) % themes.length;
+    const nextTheme = themes[nextIndex];
+    
+    setCurrentTheme(nextTheme);
+    applyTheme(nextTheme);
+    localStorage.setItem('app_theme', nextTheme);
+  };
+
+  const applyTheme = (themeId: string) => {
+    const root = document.documentElement;
+    root.classList.remove('light', 'dark', 'ocean', 'forest', 'sunset', 'rose', 'midnight', 'minimal');
+    root.classList.add(themeId);
+  };
+
   // Load data from localStorage on mount
   useEffect(() => {
     const loadedJars = storage.loadJars();
     const loadedCategories = storage.loadCategories();
     const loadedNotes = storage.loadNotes();
-    const loadedDarkMode = storage.loadDarkMode();
+    const savedTheme = localStorage.getItem('app_theme') || 'light';
 
     setJars(loadedJars);
     setCategories(loadedCategories);
     setNotes(loadedNotes);
-    setDarkMode(loadedDarkMode);
+    setCurrentTheme(savedTheme);
+    applyTheme(savedTheme);
   }, []);
 
   // Save jars to localStorage whenever they change
@@ -121,16 +141,6 @@ const Index = () => {
       storage.saveNotes(notes);
     }
   }, [notes]);
-
-  // Save dark mode to localStorage whenever it changes
-  useEffect(() => {
-    storage.saveDarkMode(darkMode);
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [darkMode]);
 
   // Handle Capacitor back button
   useEffect(() => {
@@ -403,6 +413,7 @@ const Index = () => {
 
   const getProgress = (jar: Jar) => ((jar.saved / jar.target) * 100).toFixed(1);
 
+  const darkMode = currentTheme !== 'light';
   const bgColor = darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50';
   const cardBg = darkMode ? 'bg-gray-800' : 'bg-white';
   const textColor = darkMode ? 'text-white' : 'text-gray-800';
@@ -476,12 +487,18 @@ const Index = () => {
               </h1>
             </div>
             <div className="flex items-center gap-2">
+              {tier === 'premium' && (
+                <BackupSync 
+                  onExport={() => {}} 
+                  onImport={() => {}} 
+                />
+              )}
               <SettingsDialog />
               <button
-                onClick={() => setDarkMode(!darkMode)}
+                onClick={cycleTheme}
                 className={`p-2 sm:p-3 rounded-full ${darkMode ? 'bg-gray-800/80' : 'bg-white/80'} backdrop-blur-sm shadow-lg hover:shadow-xl transition-all border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}
               >
-                {darkMode ? <Sun className="text-yellow-400" size={20} /> : <Moon className="text-indigo-600" size={20} />}
+                {darkMode ? <Moon className="text-indigo-400" size={20} /> : <Sun className="text-yellow-600" size={20} />}
               </button>
             </div>
           </div>
@@ -1335,21 +1352,35 @@ const Index = () => {
             
             {dailySavings !== null && (
               <div className={`${darkMode ? 'bg-gray-700' : 'bg-gradient-to-br from-blue-50 to-purple-50'} rounded-2xl p-6 mb-6`}>
-                <h4 className={`text-lg font-bold ${textColor} mb-4 text-center`}>Daily Savings Plan</h4>
-                <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-4 text-center mb-3`}>
-                  <p className={`text-sm ${textSecondary} mb-1`}>Save Daily</p>
-                  <p className={`text-3xl font-bold ${textColor}`}>${formatCurrency(dailySavings)}</p>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-3 text-center`}>
-                    <p className={`text-xs ${textSecondary} mb-1`}>Weekly</p>
-                    <p className={`text-lg font-bold ${textColor}`}>${formatCurrency(dailySavings * 7)}</p>
+                <h4 className={`text-lg font-bold ${textColor} mb-4 text-center`}>
+                  {tier === 'free' ? 'Monthly Savings Plan' : 'Daily Savings Plan'}
+                </h4>
+                {tier === 'free' ? (
+                  <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-4 text-center`}>
+                    <p className={`text-sm ${textSecondary} mb-1`}>Save Monthly</p>
+                    <p className={`text-3xl font-bold ${textColor}`}>${formatCurrency(dailySavings * 30)}</p>
+                    <p className={`text-xs ${textSecondary} mt-2`}>
+                      💎 Upgrade to Premium for daily & weekly plans!
+                    </p>
                   </div>
-                  <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-3 text-center`}>
-                    <p className={`text-xs ${textSecondary} mb-1`}>Monthly</p>
-                    <p className={`text-lg font-bold ${textColor}`}>${formatCurrency(dailySavings * 30)}</p>
-                  </div>
-                </div>
+                ) : (
+                  <>
+                    <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-4 text-center mb-3`}>
+                      <p className={`text-sm ${textSecondary} mb-1`}>Save Daily</p>
+                      <p className={`text-3xl font-bold ${textColor}`}>${formatCurrency(dailySavings)}</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-3 text-center`}>
+                        <p className={`text-xs ${textSecondary} mb-1`}>Weekly</p>
+                        <p className={`text-lg font-bold ${textColor}`}>${formatCurrency(dailySavings * 7)}</p>
+                      </div>
+                      <div className={`${darkMode ? 'bg-gray-800' : 'bg-white'} rounded-xl p-3 text-center`}>
+                        <p className={`text-xs ${textSecondary} mb-1`}>Monthly</p>
+                        <p className={`text-lg font-bold ${textColor}`}>${formatCurrency(dailySavings * 30)}</p>
+                      </div>
+                    </div>
+                  </>
+                )}
                 <p className={`text-xs ${textSecondary} text-center mt-3`}>
                   To reach ${formatCurrency(parseFloat(calcTargetAmount))} by {new Date(calcTargetDate).toLocaleDateString()}
                 </p>

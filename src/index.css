@@ -14,9 +14,9 @@ All colors MUST be HSL.
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 142 71% 45%;
-    --primary-dark: 142 71% 35%;
-    --primary-darker: 142 71% 25%;
+    --primary: 214 100% 50%;
+    --primary-dark: 214 100% 42%;
+    --primary-darker: 214 100% 34%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 210 40% 96.1%;
@@ -61,9 +61,9 @@ All colors MUST be HSL.
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 142 71% 45%;
-    --primary-dark: 142 71% 35%;
-    --primary-darker: 142 71% 25%;
+    --primary: 214 100% 50%;
+    --primary-dark: 214 100% 42%;
+    --primary-darker: 214 100% 34%;
     --primary-foreground: 222.2 47.4% 11.2%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -75,7 +75,7 @@ All colors MUST be HSL.
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 142 71% 45%;
+    --ring: 214 100% 50%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -94,9 +94,9 @@ All colors MUST be HSL.
     --card-foreground: 195 100% 95%;
     --popover: 210 95% 8%;
     --popover-foreground: 195 100% 95%;
-    --primary: 195 92% 55%;
-    --primary-dark: 195 92% 45%;
-    --primary-darker: 195 92% 35%;
+    --primary: 214 100% 50%;
+    --primary-dark: 214 100% 42%;
+    --primary-darker: 214 100% 34%;
     --primary-foreground: 210 100% 10%;
     --secondary: 210 80% 15%;
     --secondary-foreground: 195 100% 95%;
@@ -108,15 +108,15 @@ All colors MUST be HSL.
     --destructive-foreground: 195 100% 95%;
     --border: 210 60% 18%;
     --input: 210 60% 18%;
-    --ring: 195 92% 55%;
+    --ring: 214 100% 50%;
     --sidebar-background: 210 95% 8%;
     --sidebar-foreground: 195 100% 95%;
-    --sidebar-primary: 195 92% 55%;
+    --sidebar-primary: 214 100% 50%;
     --sidebar-primary-foreground: 210 100% 10%;
     --sidebar-accent: 210 80% 15%;
     --sidebar-accent-foreground: 195 100% 95%;
     --sidebar-border: 210 60% 18%;
-    --sidebar-ring: 195 92% 55%;
+    --sidebar-ring: 214 100% 50%;
   }
 
   /* Forest Green Theme */
@@ -127,9 +127,9 @@ All colors MUST be HSL.
     --card-foreground: 140 40% 95%;
     --popover: 140 75% 8%;
     --popover-foreground: 140 40% 95%;
-    --primary: 145 70% 50%;
-    --primary-dark: 145 70% 40%;
-    --primary-darker: 145 70% 30%;
+    --primary: 214 100% 50%;
+    --primary-dark: 214 100% 42%;
+    --primary-darker: 214 100% 34%;
     --primary-foreground: 140 80% 10%;
     --secondary: 140 60% 15%;
     --secondary-foreground: 140 40% 95%;
@@ -141,15 +141,15 @@ All colors MUST be HSL.
     --destructive-foreground: 140 40% 95%;
     --border: 140 45% 18%;
     --input: 140 45% 18%;
-    --ring: 145 70% 50%;
+    --ring: 214 100% 50%;
     --sidebar-background: 140 75% 8%;
     --sidebar-foreground: 140 40% 95%;
-    --sidebar-primary: 145 70% 50%;
+    --sidebar-primary: 214 100% 50%;
     --sidebar-primary-foreground: 140 80% 10%;
     --sidebar-accent: 140 60% 15%;
     --sidebar-accent-foreground: 140 40% 95%;
     --sidebar-border: 140 45% 18%;
-    --sidebar-ring: 145 70% 50%;
+    --sidebar-ring: 214 100% 50%;
   }
 
   /* Sunset Orange Theme */
@@ -160,9 +160,9 @@ All colors MUST be HSL.
     --card-foreground: 30 90% 95%;
     --popover: 15 75% 8%;
     --popover-foreground: 30 90% 95%;
-    --primary: 25 95% 55%;
-    --primary-dark: 25 95% 45%;
-    --primary-darker: 25 95% 35%;
+    --primary: 214 100% 50%;
+    --primary-dark: 214 100% 42%;
+    --primary-darker: 214 100% 34%;
     --primary-foreground: 15 80% 10%;
     --secondary: 15 70% 15%;
     --secondary-foreground: 30 90% 95%;
@@ -174,15 +174,15 @@ All colors MUST be HSL.
     --destructive-foreground: 30 90% 95%;
     --border: 15 50% 18%;
     --input: 15 50% 18%;
-    --ring: 25 95% 55%;
+    --ring: 214 100% 50%;
     --sidebar-background: 15 75% 8%;
     --sidebar-foreground: 30 90% 95%;
-    --sidebar-primary: 25 95% 55%;
+    --sidebar-primary: 214 100% 50%;
     --sidebar-primary-foreground: 15 80% 10%;
     --sidebar-accent: 15 70% 15%;
     --sidebar-accent-foreground: 30 90% 95%;
     --sidebar-border: 15 50% 18%;
-    --sidebar-ring: 25 95% 55%;
+    --sidebar-ring: 214 100% 50%;
   }
 
   /* Rose Gold Theme */
@@ -193,9 +193,9 @@ All colors MUST be HSL.
     --card-foreground: 340 30% 95%;
     --popover: 340 55% 10%;
     --popover-foreground: 340 30% 95%;
-    --primary: 345 75% 60%;
-    --primary-dark: 345 75% 50%;
-    --primary-darker: 345 75% 40%;
+    --primary: 214 100% 50%;
+    --primary-dark: 214 100% 42%;
+    --primary-darker: 214 100% 34%;
     --primary-foreground: 340 60% 12%;
     --secondary: 340 45% 18%;
     --secondary-foreground: 340 30% 95%;
@@ -207,15 +207,15 @@ All colors MUST be HSL.
     --destructive-foreground: 340 30% 95%;
     --border: 340 30% 22%;
     --input: 340 30% 22%;
-    --ring: 345 75% 60%;
+    --ring: 214 100% 50%;
     --sidebar-background: 340 55% 10%;
     --sidebar-foreground: 340 30% 95%;
-    --sidebar-primary: 345 75% 60%;
+    --sidebar-primary: 214 100% 50%;
     --sidebar-primary-foreground: 340 60% 12%;
     --sidebar-accent: 340 45% 18%;
     --sidebar-accent-foreground: 340 30% 95%;
     --sidebar-border: 340 30% 22%;
-    --sidebar-ring: 345 75% 60%;
+    --sidebar-ring: 214 100% 50%;
   }
 
   /* Midnight Purple Theme */
@@ -226,9 +226,9 @@ All colors MUST be HSL.
     --card-foreground: 250 30% 95%;
     --popover: 250 70% 8%;
     --popover-foreground: 250 30% 95%;
-    --primary: 260 80% 60%;
-    --primary-dark: 260 80% 50%;
-    --primary-darker: 260 80% 40%;
+    --primary: 214 100% 50%;
+    --primary-dark: 214 100% 42%;
+    --primary-darker: 214 100% 34%;
     --primary-foreground: 250 75% 10%;
     --secondary: 250 55% 15%;
     --secondary-foreground: 250 30% 95%;
@@ -240,15 +240,15 @@ All colors MUST be HSL.
     --destructive-foreground: 250 30% 95%;
     --border: 250 40% 18%;
     --input: 250 40% 18%;
-    --ring: 260 80% 60%;
+    --ring: 214 100% 50%;
     --sidebar-background: 250 70% 8%;
     --sidebar-foreground: 250 30% 95%;
-    --sidebar-primary: 260 80% 60%;
+    --sidebar-primary: 214 100% 50%;
     --sidebar-primary-foreground: 250 75% 10%;
     --sidebar-accent: 250 55% 15%;
     --sidebar-accent-foreground: 250 30% 95%;
     --sidebar-border: 250 40% 18%;
-    --sidebar-ring: 260 80% 60%;
+    --sidebar-ring: 214 100% 50%;
   }
 
   /* Minimal Gray Theme */
@@ -259,9 +259,9 @@ All colors MUST be HSL.
     --card-foreground: 220 10% 95%;
     --popover: 220 15% 12%;
     --popover-foreground: 220 10% 95%;
-    --primary: 220 20% 50%;
-    --primary-dark: 220 20% 40%;
-    --primary-darker: 220 20% 30%;
+    --primary: 214 100% 50%;
+    --primary-dark: 214 100% 42%;
+    --primary-darker: 214 100% 34%;
     --primary-foreground: 220 10% 95%;
     --secondary: 220 15% 20%;
     --secondary-foreground: 220 10% 95%;
@@ -273,15 +273,15 @@ All colors MUST be HSL.
     --destructive-foreground: 220 10% 95%;
     --border: 220 15% 25%;
     --input: 220 15% 25%;
-    --ring: 220 20% 50%;
+    --ring: 214 100% 50%;
     --sidebar-background: 220 15% 12%;
     --sidebar-foreground: 220 10% 95%;
-    --sidebar-primary: 220 20% 50%;
+    --sidebar-primary: 214 100% 50%;
     --sidebar-primary-foreground: 220 10% 95%;
     --sidebar-accent: 220 15% 20%;
     --sidebar-accent-foreground: 220 10% 95%;
     --sidebar-border: 220 15% 25%;
-    --sidebar-ring: 220 20% 50%;
+    --sidebar-ring: 214 100% 50%;
   }
 }
 

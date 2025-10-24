@@ -10,7 +10,6 @@ import {
 } from './ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { PremiumSettings } from './PremiumSettings';
-import { ThemeSwitcher } from './ThemeSwitcher';
 import { NotificationSettings } from './NotificationSettings';
 import { ScrollArea } from './ui/scroll-area';
 
@@ -30,17 +29,13 @@ export const SettingsDialog = () => {
           </DialogDescription>
         </DialogHeader>
         <Tabs defaultValue="premium" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="premium">Premium</TabsTrigger>
-            <TabsTrigger value="theme">Theme</TabsTrigger>
             <TabsTrigger value="notifications">Notifications</TabsTrigger>
           </TabsList>
           <ScrollArea className="h-[500px] pr-4">
             <TabsContent value="premium" className="mt-4">
               <PremiumSettings />
-            </TabsContent>
-            <TabsContent value="theme" className="mt-4">
-              <ThemeSwitcher />
             </TabsContent>
             <TabsContent value="notifications" className="mt-4 space-y-4">
               <div className="rounded-lg border p-4">
