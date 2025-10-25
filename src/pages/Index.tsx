@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
-import { Plus, Target, TrendingUp, Moon, Sun, Trash2 } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Plus, Target, TrendingUp, Moon, Sun, Trash2, Upload } from 'lucide-react';
 import SavingsButton from '@/components/SavingsButton';
 import JarVisualization from '@/components/JarVisualization';
+import CircularJarVisualization from '@/components/CircularJarVisualization';
 import SavingsChart from '@/components/SavingsChart';
 import EmotionalInsights from '@/components/EmotionalInsights';
 import { BackupSync } from '@/components/BackupSync';
@@ -27,6 +28,8 @@ interface Jar {
   categoryId?: number;
   targetDate?: string;
   createdAt?: string;
+  jarType?: 'flask' | 'circular';
+  imageUrl?: string;
 }
 
 interface Category {
@@ -63,7 +66,8 @@ const Index = () => {
   const [selectedJar, setSelectedJar] = useState<Jar | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [currentTheme, setCurrentTheme] = useState('light');
-  const [newJar, setNewJar] = useState({ name: '', target: '', currency: '€', categoryId: 0, targetDate: '' });
+  const [newJar, setNewJar] = useState({ name: '', target: '', currency: '€', categoryId: 0, targetDate: '', jarType: 'flask' as 'flask' | 'circular', imageUrl: '' });
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [newCategory, setNewCategory] = useState({ name: '', icon: '' });
   const [addAmount, setAddAmount] = useState('');
@@ -202,6 +206,17 @@ const Index = () => {
     lightgreen: { bg: '#B8F5CD', border: '#86EFAC' }
   };
 
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewJar({ ...newJar, imageUrl: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const createJar = () => {
     // Feature gate: Check jar limit for free users
     if (tier === 'free' && jars.length >= FREE_LIMITS.maxJars) {
@@ -227,9 +242,11 @@ const Index = () => {
         categoryId: newJar.categoryId || categories[0].id,
         targetDate: newJar.targetDate || undefined,
         createdAt: new Date().toISOString(),
+        jarType: newJar.jarType,
+        imageUrl: newJar.imageUrl || undefined,
       };
       setJars([...jars, jar]);
-      setNewJar({ name: '', target: '', currency: '€', categoryId: categories[0].id, targetDate: '' });
+      setNewJar({ name: '', target: '', currency: '€', categoryId: categories[0].id, targetDate: '', jarType: 'flask', imageUrl: '' });
       setShowCreateModal(false);
     }
   };
@@ -677,7 +694,16 @@ const Index = () => {
                               </button>
                               <h4 className={`text-sm sm:text-base font-bold ${textColor} mb-2`}>{jar.name}</h4>
                               <div className="relative h-24 sm:h-32 mb-2 flex items-center justify-center">
-                                <JarVisualization progress={progress} jarId={jar.id} isLarge={false} />
+                                {jar.jarType === 'circular' ? (
+                                  <CircularJarVisualization 
+                                    progress={progress} 
+                                    jarId={jar.id} 
+                                    isLarge={false} 
+                                    imageUrl={jar.imageUrl}
+                                  />
+                                ) : (
+                                  <JarVisualization progress={progress} jarId={jar.id} isLarge={false} />
+                                )}
                               </div>
                               <div className="text-center mb-2">
                                 <div
@@ -709,7 +735,7 @@ const Index = () => {
                 <div className="flex items-center justify-center py-8">
                   <SavingsButton onClick={() => {
                     if (categories.length > 0) {
-                      setNewJar({ name: '', target: '', currency: '€', categoryId: categories[0].id, targetDate: '' });
+                      setNewJar({ name: '', target: '', currency: '€', categoryId: categories[0].id, targetDate: '', jarType: 'flask', imageUrl: '' });
                     }
                     setShowCreateModal(true);
                   }} size="default" className="whitespace-nowrap text-sm sm:text-base w-auto">
@@ -752,7 +778,16 @@ const Index = () => {
               </p>
             )}
             <div className="relative h-56 sm:h-72 md:h-96 mb-4 sm:mb-6 flex items-center justify-center">
-              <JarVisualization progress={parseFloat(getProgress(selectedJar))} jarId={selectedJar.id} isLarge={true} />
+              {selectedJar.jarType === 'circular' ? (
+                <CircularJarVisualization 
+                  progress={parseFloat(getProgress(selectedJar))} 
+                  jarId={selectedJar.id} 
+                  isLarge={true} 
+                  imageUrl={selectedJar.imageUrl}
+                />
+              ) : (
+                <JarVisualization progress={parseFloat(getProgress(selectedJar))} jarId={selectedJar.id} isLarge={true} />
+              )}
             </div>
             <div className="text-center mb-4 sm:mb-6">
               <div
@@ -942,6 +977,84 @@ const Index = () => {
               </>
             ) : (
               <>
+                {/* Jar Type Selection */}
+                <div className="mb-4">
+                  <label className={`block text-sm font-medium mb-3 ${textColor}`}>Choose Jar Style</label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <button
+                      type="button"
+                      onClick={() => setNewJar({ ...newJar, jarType: 'flask' })}
+                      className={`p-4 rounded-xl border-2 transition-all ${
+                        newJar.jarType === 'flask'
+                          ? 'border-primary bg-primary/10'
+                          : darkMode ? 'border-gray-600 hover:border-gray-500' : 'border-gray-300 hover:border-gray-400'
+                      }`}
+                    >
+                      <div className="h-24 mb-2 flex items-center justify-center">
+                        <JarVisualization progress={50} jarId={9999} isLarge={false} />
+                      </div>
+                      <p className={`text-sm font-medium text-center ${textColor}`}>Classic Jar</p>
+                      <p className={`text-xs ${textSecondary} text-center mt-1`}>Default style</p>
+                    </button>
+                    
+                    <button
+                      type="button"
+                      onClick={() => setNewJar({ ...newJar, jarType: 'circular' })}
+                      className={`p-4 rounded-xl border-2 transition-all ${
+                        newJar.jarType === 'circular'
+                          ? 'border-primary bg-primary/10'
+                          : darkMode ? 'border-gray-600 hover:border-gray-500' : 'border-gray-300 hover:border-gray-400'
+                      }`}
+                    >
+                      <div className="h-24 mb-2 flex items-center justify-center">
+                        <CircularJarVisualization progress={50} jarId={9998} isLarge={false} />
+                      </div>
+                      <p className={`text-sm font-medium text-center ${textColor}`}>Photo Circle</p>
+                      <p className={`text-xs ${textSecondary} text-center mt-1`}>With custom image</p>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Image Upload for Circular Jar */}
+                {newJar.jarType === 'circular' && (
+                  <div className="mb-4">
+                    <label className={`block text-sm font-medium mb-2 ${textColor}`}>Upload Image (Optional)</label>
+                    <div className="flex gap-3">
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className={`flex-1 px-4 py-3 rounded-xl border-2 border-primary focus:outline-none flex items-center justify-center gap-2 ${
+                          darkMode ? 'bg-gray-700 text-white hover:bg-gray-600' : 'hover:bg-gray-50'
+                        }`}
+                      >
+                        <Upload size={18} />
+                        {newJar.imageUrl ? 'Change Image' : 'Choose Image'}
+                      </button>
+                      {newJar.imageUrl && (
+                        <button
+                          type="button"
+                          onClick={() => setNewJar({ ...newJar, imageUrl: '' })}
+                          className="px-4 py-3 rounded-xl bg-red-500 text-white hover:bg-red-600"
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                    {newJar.imageUrl && (
+                      <div className="mt-3 flex justify-center">
+                        <img src={newJar.imageUrl} alt="Preview" className="w-24 h-24 object-cover rounded-full" />
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 <input
                   type="text"
                   placeholder="Jar Name"
