@@ -955,8 +955,8 @@ const Index = () => {
 
       {/* Create Jar Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] flex items-center justify-center p-4 z-40">
-          <div className={`${cardBg} rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl`}>
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] flex items-center justify-center p-4 z-40 overflow-y-auto">
+          <div className={`${cardBg} rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl my-8 max-h-[90vh] overflow-y-auto`}>
             <h3 className={`text-xl sm:text-2xl font-bold mb-6 ${textColor}`}>Create New Jar</h3>
             {categories.length === 0 ? (
               <>
@@ -1161,8 +1161,8 @@ const Index = () => {
 
       {/* Note Modal */}
       {showNoteModal && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] flex items-center justify-center p-4 z-40">
-          <div className={`${cardBg} rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl`}>
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] flex items-center justify-center p-4 z-40 overflow-y-auto">
+          <div className={`${cardBg} rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl my-8 max-h-[90vh] overflow-y-auto`}>
             <h3 className={`text-xl sm:text-2xl font-bold mb-6 ${textColor}`}>Add Note</h3>
             <textarea
               placeholder="Write your note..."
@@ -1210,8 +1210,8 @@ const Index = () => {
 
       {/* Jar Note Modal */}
       {showJarNoteModal && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] flex items-center justify-center p-4 z-40">
-          <div className={`${cardBg} rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl`}>
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] flex items-center justify-center p-4 z-40 overflow-y-auto">
+          <div className={`${cardBg} rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl my-8 max-h-[90vh] overflow-y-auto`}>
             <h3 className={`text-xl sm:text-2xl font-bold mb-6 ${textColor}`}>Add Sticky Note</h3>
             <textarea
               placeholder="Write your note..."
@@ -1259,8 +1259,8 @@ const Index = () => {
 
       {/* Records Modal */}
       {showRecordsModal && selectedJar && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] flex items-center justify-center p-4 z-40">
-          <div className={`${cardBg} rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl max-h-[80vh] overflow-y-auto`}>
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] flex items-center justify-center p-4 z-40 overflow-y-auto">
+          <div className={`${cardBg} rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl my-8 max-h-[90vh] overflow-y-auto`}>
             <h3 className={`text-xl sm:text-2xl font-bold mb-6 ${textColor}`}>Transaction Records - {selectedJar.name}</h3>
             {tier === 'free' && (
               <p className={`text-xs ${textSecondary} mb-4 text-center`}>
@@ -1325,8 +1325,8 @@ const Index = () => {
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && jarToDelete && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] flex items-center justify-center p-4 z-50">
-          <div className={`${cardBg} rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl`}>
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] flex items-center justify-center p-4 z-40 overflow-y-auto">
+          <div className={`${cardBg} rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl my-8`}>
             <h3 className={`text-xl sm:text-2xl font-bold mb-4 ${textColor}`}>Delete Jar?</h3>
             <p className={`mb-6 ${textSecondary}`}>
               Delete "{jarToDelete.name}"? This cannot be undone.
@@ -1352,8 +1352,8 @@ const Index = () => {
 
       {/* Category Modal */}
       {showCategoryModal && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] flex items-center justify-center p-4 z-40">
-          <div className={`${cardBg} rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl`}>
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] flex items-center justify-center p-4 z-40 overflow-y-auto">
+          <div className={`${cardBg} rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl my-8`}>
             <h3 className={`text-xl sm:text-2xl font-bold mb-6 ${textColor}`}>Create New Category</h3>
             <input
               type="text"
@@ -1378,8 +1378,8 @@ const Index = () => {
 
       {/* Edit Category Modal */}
       {showEditCategoryModal && editingCategory && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] flex items-center justify-center p-4 z-40">
-          <div className={`${cardBg} rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl`}>
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] flex items-center justify-center p-4 z-40 overflow-y-auto">
+          <div className={`${cardBg} rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl my-8`}>
             <h3 className={`text-xl sm:text-2xl font-bold mb-6 ${textColor}`}>Edit Category</h3>
             <input
               type="text"
@@ -1411,8 +1411,8 @@ const Index = () => {
 
       {/* Delete Category Confirmation Modal */}
       {showDeleteCategoryConfirm && categoryToDelete && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] flex items-center justify-center p-4 z-50">
-          <div className={`${cardBg} rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl`}>
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <div className={`${cardBg} rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl my-8`}>
             <h3 className={`text-xl sm:text-2xl font-bold mb-4 ${textColor}`}>Delete Category?</h3>
             <p className={`mb-6 ${textSecondary}`}>
               Delete category "{categoryToDelete.name}"? This will also delete all jars in this category. This cannot be undone.
@@ -1438,8 +1438,8 @@ const Index = () => {
 
       {/* Calculator Modal */}
       {showCalculator && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] flex items-center justify-center p-4 z-40">
-          <div className={`${cardBg} rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl`}>
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] flex items-center justify-center p-4 z-40 overflow-y-auto">
+          <div className={`${cardBg} rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl my-8 max-h-[90vh] overflow-y-auto`}>
             <h3 className={`text-xl sm:text-2xl font-bold mb-6 ${textColor} flex items-center gap-2`}>
               📊 Savings Calculator
             </h3>
