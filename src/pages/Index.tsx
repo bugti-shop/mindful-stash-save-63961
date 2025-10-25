@@ -30,6 +30,7 @@ interface Jar {
   createdAt?: string;
   jarType?: 'flask' | 'circular';
   imageUrl?: string;
+  purposeType?: 'saving' | 'debt';
 }
 
 interface Category {
@@ -66,7 +67,7 @@ const Index = () => {
   const [selectedJar, setSelectedJar] = useState<Jar | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [currentTheme, setCurrentTheme] = useState('light');
-  const [newJar, setNewJar] = useState({ name: '', target: '', currency: '€', categoryId: 0, targetDate: '', jarType: 'flask' as 'flask' | 'circular', imageUrl: '' });
+  const [newJar, setNewJar] = useState({ name: '', target: '', currency: '€', categoryId: 0, targetDate: '', jarType: 'flask' as 'flask' | 'circular', imageUrl: '', purposeType: 'saving' as 'saving' | 'debt' });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [newCategory, setNewCategory] = useState({ name: '', icon: '' });
@@ -244,9 +245,10 @@ const Index = () => {
         createdAt: new Date().toISOString(),
         jarType: newJar.jarType,
         imageUrl: newJar.imageUrl || undefined,
+        purposeType: newJar.purposeType,
       };
       setJars([...jars, jar]);
-      setNewJar({ name: '', target: '', currency: '€', categoryId: categories[0].id, targetDate: '', jarType: 'flask', imageUrl: '' });
+      setNewJar({ name: '', target: '', currency: '€', categoryId: categories[0].id, targetDate: '', jarType: 'flask', imageUrl: '', purposeType: 'saving' });
       setShowCreateModal(false);
     }
   };
@@ -700,9 +702,15 @@ const Index = () => {
                                     jarId={jar.id} 
                                     isLarge={false} 
                                     imageUrl={jar.imageUrl}
+                                    isDebtJar={jar.purposeType === 'debt'}
                                   />
                                 ) : (
-                                  <JarVisualization progress={progress} jarId={jar.id} isLarge={false} />
+                                  <JarVisualization 
+                                    progress={progress} 
+                                    jarId={jar.id} 
+                                    isLarge={false}
+                                    isDebtJar={jar.purposeType === 'debt'}
+                                  />
                                 )}
                               </div>
                               <div className="text-center mb-2">
@@ -735,7 +743,7 @@ const Index = () => {
                 <div className="flex items-center justify-center py-8">
                   <SavingsButton onClick={() => {
                     if (categories.length > 0) {
-                      setNewJar({ name: '', target: '', currency: '€', categoryId: categories[0].id, targetDate: '', jarType: 'flask', imageUrl: '' });
+                      setNewJar({ name: '', target: '', currency: '€', categoryId: categories[0].id, targetDate: '', jarType: 'flask', imageUrl: '', purposeType: 'saving' });
                     }
                     setShowCreateModal(true);
                   }} size="default" className="whitespace-nowrap text-sm sm:text-base w-auto">
@@ -977,6 +985,40 @@ const Index = () => {
               </>
             ) : (
               <>
+                {/* Purpose Type Selection */}
+                <div className="mb-4">
+                  <label className={`block text-sm font-medium mb-3 ${textColor}`}>Jar Purpose</label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <button
+                      type="button"
+                      onClick={() => setNewJar({ ...newJar, purposeType: 'saving' })}
+                      className={`p-4 rounded-xl border-2 transition-all ${
+                        newJar.purposeType === 'saving'
+                          ? 'border-primary bg-primary/10'
+                          : darkMode ? 'border-gray-600 hover:border-gray-500' : 'border-gray-300 hover:border-gray-400'
+                      }`}
+                    >
+                      <div className="text-3xl mb-2">💰</div>
+                      <p className={`text-sm font-medium text-center ${textColor}`}>Saving</p>
+                      <p className={`text-xs ${textSecondary} text-center mt-1`}>Goal-based savings</p>
+                    </button>
+                    
+                    <button
+                      type="button"
+                      onClick={() => setNewJar({ ...newJar, purposeType: 'debt' })}
+                      className={`p-4 rounded-xl border-2 transition-all ${
+                        newJar.purposeType === 'debt'
+                          ? 'border-primary bg-primary/10'
+                          : darkMode ? 'border-gray-600 hover:border-gray-500' : 'border-gray-300 hover:border-gray-400'
+                      }`}
+                    >
+                      <div className="text-3xl mb-2">📉</div>
+                      <p className={`text-sm font-medium text-center ${textColor}`}>Debt/Loan</p>
+                      <p className={`text-xs ${textSecondary} text-center mt-1`}>Track payoff progress</p>
+                    </button>
+                  </div>
+                </div>
+
                 {/* Jar Type Selection */}
                 <div className="mb-4">
                   <label className={`block text-sm font-medium mb-3 ${textColor}`}>Choose Jar Style</label>
@@ -1277,19 +1319,30 @@ const Index = () => {
                   })
                   .map(record => {
                   const recordDate = new Date(record.date);
+                  const isDebtJar = selectedJar.purposeType === 'debt';
+                  
+                  // For debt jars: saved (adding debt) is bad (red), withdrawn (paying off) is good (green)
+                  // For saving jars: saved (adding money) is good (green), withdrawn is bad (red)
+                  const isSaved = record.type === 'saved';
+                  const isPositive = isDebtJar ? !isSaved : isSaved;
+                  const bgColor = isPositive 
+                    ? (darkMode ? 'bg-green-900/20' : 'bg-green-50')
+                    : (darkMode ? 'bg-red-900/20' : 'bg-red-50');
+                  const textColor = isPositive ? 'text-green-600' : 'text-red-600';
+                  const badgeColor = isPositive ? 'bg-green-600 text-white' : 'bg-red-600 text-white';
+                  const sign = isDebtJar 
+                    ? (isSaved ? '+ ' : '- ')
+                    : (isSaved ? '+ ' : '- ');
+                  
                   return (
                     <div
                       key={record.id}
-                      className={`p-4 rounded-xl ${
-                        record.type === 'saved'
-                          ? darkMode ? 'bg-green-900/20' : 'bg-green-50'
-                          : darkMode ? 'bg-red-900/20' : 'bg-red-50'
-                      }`}
+                      className={`p-4 rounded-xl ${bgColor}`}
                     >
                       <div className="flex justify-between items-center">
                         <div>
-                          <p className={`font-bold ${record.type === 'saved' ? 'text-green-600' : 'text-red-600'}`}>
-                            {record.type === 'saved' ? '+ ' : '- '}{selectedJar.currency || '€'}{formatCurrency(record.amount)}
+                          <p className={`font-bold ${textColor}`}>
+                            {sign}{selectedJar.currency || '€'}{formatCurrency(record.amount)}
                           </p>
                           <p className={`text-sm ${textSecondary}`}>
                             {recordDate.toLocaleDateString('en-US', { 
@@ -1299,12 +1352,8 @@ const Index = () => {
                             })}
                           </p>
                         </div>
-                        <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                          record.type === 'saved'
-                            ? 'bg-green-600 text-white'
-                            : 'bg-red-600 text-white'
-                        }`}>
-                          {record.type === 'saved' ? 'Saved' : 'Withdrawn'}
+                        <div className={`px-3 py-1 rounded-full text-xs font-semibold ${badgeColor}`}>
+                          {record.type === 'saved' ? (isDebtJar ? 'Added Debt' : 'Saved') : (isDebtJar ? 'Paid Off' : 'Withdrawn')}
                         </div>
                       </div>
                     </div>

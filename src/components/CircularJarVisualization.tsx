@@ -3,13 +3,15 @@ interface CircularJarVisualizationProps {
   jarId: number;
   isLarge?: boolean;
   imageUrl?: string;
+  isDebtJar?: boolean;
 }
 
 const CircularJarVisualization = ({ 
   progress, 
   jarId, 
   isLarge = false,
-  imageUrl 
+  imageUrl,
+  isDebtJar = false
 }: CircularJarVisualizationProps) => {
   const size = isLarge ? 400 : 280;
   const strokeWidth = isLarge ? 20 : 16;
@@ -32,6 +34,12 @@ const CircularJarVisualization = ({
   const getStrokeOffset = (startPercent: number) => {
     return circumference - (circumference * startPercent / 100);
   };
+
+  // For debt jars, reverse the gradient IDs: green->blue->orange->red
+  const firstGradient = isDebtJar ? 'green-gradient' : 'red-gradient';
+  const secondGradient = isDebtJar ? 'blue-gradient' : 'orange-gradient';
+  const thirdGradient = isDebtJar ? 'orange-gradient' : 'blue-gradient';
+  const fourthGradient = isDebtJar ? 'red-gradient' : 'green-gradient';
 
   return (
     <div className="relative w-full h-full flex items-center justify-center">
@@ -78,14 +86,14 @@ const CircularJarVisualization = ({
           />
         )}
         
-        {/* Red segment (0-25%) */}
+        {/* First segment (0-25%) */}
         {redProgress > 0 && (
           <circle
             cx={size / 2}
             cy={size / 2}
             r={radius}
             fill="none"
-            stroke="url(#red-gradient)"
+            stroke={`url(#${firstGradient})`}
             strokeWidth={strokeWidth}
             strokeDasharray={getStrokeDash(redProgress)}
             strokeDashoffset={getStrokeOffset(0)}
@@ -93,14 +101,14 @@ const CircularJarVisualization = ({
           />
         )}
         
-        {/* Orange segment (25-50%) */}
+        {/* Second segment (25-50%) */}
         {orangeProgress > 0 && (
           <circle
             cx={size / 2}
             cy={size / 2}
             r={radius}
             fill="none"
-            stroke="url(#orange-gradient)"
+            stroke={`url(#${secondGradient})`}
             strokeWidth={strokeWidth}
             strokeDasharray={getStrokeDash(orangeProgress)}
             strokeDashoffset={getStrokeOffset(25)}
@@ -108,14 +116,14 @@ const CircularJarVisualization = ({
           />
         )}
         
-        {/* Blue segment (50-75%) */}
+        {/* Third segment (50-75%) */}
         {blueProgress > 0 && (
           <circle
             cx={size / 2}
             cy={size / 2}
             r={radius}
             fill="none"
-            stroke="url(#blue-gradient)"
+            stroke={`url(#${thirdGradient})`}
             strokeWidth={strokeWidth}
             strokeDasharray={getStrokeDash(blueProgress)}
             strokeDashoffset={getStrokeOffset(50)}
@@ -123,14 +131,14 @@ const CircularJarVisualization = ({
           />
         )}
         
-        {/* Green segment (75-100%) */}
+        {/* Fourth segment (75-100%) */}
         {greenProgress > 0 && (
           <circle
             cx={size / 2}
             cy={size / 2}
             r={radius}
             fill="none"
-            stroke="url(#green-gradient)"
+            stroke={`url(#${fourthGradient})`}
             strokeWidth={strokeWidth}
             strokeDasharray={getStrokeDash(greenProgress)}
             strokeDashoffset={getStrokeOffset(75)}
