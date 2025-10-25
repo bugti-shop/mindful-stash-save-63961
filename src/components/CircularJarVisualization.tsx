@@ -11,8 +11,8 @@ const CircularJarVisualization = ({
   isLarge = false,
   imageUrl 
 }: CircularJarVisualizationProps) => {
-  const size = isLarge ? 320 : 200;
-  const strokeWidth = isLarge ? 16 : 12;
+  const size = isLarge ? 400 : 280;
+  const strokeWidth = isLarge ? 20 : 16;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   
@@ -58,15 +58,17 @@ const CircularJarVisualization = ({
         
         {/* Image or placeholder inside */}
         {imageUrl ? (
-          <image
-            href={imageUrl}
-            x={strokeWidth + 8}
-            y={strokeWidth + 8}
-            width={size - (strokeWidth + 8) * 2}
-            height={size - (strokeWidth + 8) * 2}
-            clipPath={`url(#clip-circle-${jarId})`}
-            preserveAspectRatio="xMidYMid slice"
-          />
+          <g transform={`rotate(90 ${size / 2} ${size / 2})`}>
+            <image
+              href={imageUrl}
+              x={strokeWidth + 8}
+              y={strokeWidth + 8}
+              width={size - (strokeWidth + 8) * 2}
+              height={size - (strokeWidth + 8) * 2}
+              clipPath={`url(#clip-circle-${jarId})`}
+              preserveAspectRatio="xMidYMid slice"
+            />
+          </g>
         ) : (
           <circle
             cx={size / 2}
@@ -156,15 +158,6 @@ const CircularJarVisualization = ({
           </linearGradient>
         </defs>
       </svg>
-      
-      {/* Progress percentage in the center */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className={`${
-          isLarge ? 'text-4xl' : 'text-2xl'
-        } font-bold bg-primary/10 px-4 py-2 rounded-full`}>
-          {progress}%
-        </div>
-      </div>
     </div>
   );
 };
