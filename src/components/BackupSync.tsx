@@ -36,16 +36,20 @@ export const BackupSync = ({ onExport, onImport }: BackupSyncProps) => {
       // Check if running on native mobile platform
       if (Capacitor.isNativePlatform()) {
         // Use Capacitor Filesystem for mobile
-        await Filesystem.writeFile({
+        const result = await Filesystem.writeFile({
           path: fileName,
           data: jsonData,
           directory: Directory.Documents,
           encoding: Encoding.UTF8,
         });
 
+        // Get the full file path
+        const fullPath = result.uri;
+
         toast({
           title: "Backup Created",
-          description: "Your data has been saved to Documents folder.",
+          description: `File saved to: ${fullPath}`,
+          duration: 6000,
         });
       } else {
         // Use browser download for web
@@ -59,9 +63,17 @@ export const BackupSync = ({ onExport, onImport }: BackupSyncProps) => {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
 
+        // Get default download location for browser
+        const downloadPath = navigator.userAgent.includes('Windows') 
+          ? `C:\\Users\\${navigator.userAgent.split('Windows')[0] || 'User'}\\Downloads\\${fileName}`
+          : navigator.userAgent.includes('Mac')
+          ? `/Users/${navigator.userAgent.split('Mac')[0] || 'User'}/Downloads/${fileName}`
+          : `/home/Downloads/${fileName}`;
+
         toast({
           title: "Backup Created",
-          description: "Your data has been downloaded to your device.",
+          description: `File downloaded to: Downloads folder → ${fileName}`,
+          duration: 6000,
         });
       }
       

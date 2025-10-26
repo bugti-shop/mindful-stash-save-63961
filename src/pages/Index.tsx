@@ -14,6 +14,9 @@ import { storage } from '@/lib/storage';
 import { formatCurrency } from '@/lib/utils';
 import logoImg from '@/assets/logo.png';
 import { App as CapacitorApp } from '@capacitor/app';
+import { DndContext, closestCenter, DragEndEvent, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { SortableContext, horizontalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
+import { SortableJarCard } from '@/components/SortableJarCard';
 
 interface Jar {
   id: number;
@@ -92,6 +95,31 @@ const Index = () => {
   const [showDeleteCategoryConfirm, setShowDeleteCategoryConfirm] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+
+  // Drag and Drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent, categoryId: number) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const categoryJars = getCategoryJars(categoryId);
+      const oldIndex = categoryJars.findIndex((jar) => jar.id === active.id);
+      const newIndex = categoryJars.findIndex((jar) => jar.id === over.id);
+
+      const reorderedCategoryJars = arrayMove(categoryJars, oldIndex, newIndex);
+      
+      // Update jars array with new order
+      const otherJars = jars.filter(jar => jar.categoryId !== categoryId);
+      setJars([...otherJars, ...reorderedCategoryJars]);
+    }
+  };
 
   // Theme cycling: light -> ocean -> forest -> sunset -> midnight -> light
   const themes = ['light', 'ocean', 'forest', 'sunset', 'midnight'];
@@ -675,70 +703,39 @@ const Index = () => {
                         </div>
                       </div>
 
-                      {/* Subcategories (Jars) - Horizontal Scrollable */}
-                      <div className="flex gap-3 overflow-x-auto pb-2 -mx-2 px-2 scrollbar-thin scrollbar-thumb-primary scrollbar-track-transparent">
-                        {categoryJars.map(jar => {
-                          const progress = parseFloat(getProgress(jar));
-                          return (
-                            <div
-                              key={jar.id}
-                              onClick={() => setSelectedJar(jar)}
-                              className={`${cardBg} rounded-2xl p-3 sm:p-4 shadow-lg cursor-pointer transform hover:scale-105 transition-all duration-300 relative group min-w-[200px] max-w-[200px] flex-shrink-0`}
-                            >
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setJarToDelete(jar);
-                                  setShowDeleteConfirm(true);
-                                }}
-                                className="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 z-10"
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                              <h4 className={`text-sm sm:text-base font-bold ${textColor} mb-2`}>{jar.name}</h4>
-                              <div className="relative h-24 sm:h-32 mb-2 flex items-center justify-center">
-                                {jar.jarType === 'circular' ? (
-                                  <CircularJarVisualization 
-                                    progress={progress} 
-                                    jarId={jar.id} 
-                                    isLarge={false} 
-                                    imageUrl={jar.imageUrl}
-                                    isDebtJar={jar.purposeType === 'debt'}
-                                  />
-                                ) : (
-                                  <JarVisualization 
-                                    progress={progress} 
-                                    jarId={jar.id} 
-                                    isLarge={false}
-                                    isDebtJar={jar.purposeType === 'debt'}
-                                  />
-                                )}
-                              </div>
-                              <div className="text-center mb-2">
-                                <div
-                                  className={`text-base sm:text-lg font-bold ${(() => {
-                                    // For debt jars, red for high debt, green for low
-                                    if (jar.purposeType === 'debt') {
-                                      return progress >= 75 ? 'text-red-600' : progress >= 50 ? 'text-orange-600' : progress >= 25 ? 'text-blue-600' : 'text-green-600';
-                                    }
-                                    // For saving jars, green for high savings, red for low
-                                    return progress >= 75 ? 'text-green-600' : progress >= 50 ? 'text-blue-600' : progress >= 25 ? 'text-orange-600' : 'text-red-600';
-                                  })()}`}
-                                >
-                                  {progress}%
-                                </div>
-                              </div>
-                              <div className={`flex justify-between items-center text-xs`}>
-                                <span className="text-green-600 font-semibold">{jar.currency || '$'}{formatCurrency(jar.saved)}</span>
-                                <span className="text-red-600 font-semibold">
-                                  -{jar.currency || '$'}{formatCurrency(Math.abs(jar.saved - jar.target))}
-                                </span>
-                                <span className={textSecondary}>{jar.currency || '$'}{formatCurrency(jar.target)}</span>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
+                      {/* Subcategories (Jars) - Horizontal Scrollable with Drag & Drop */}
+                      <DndContext
+                        sensors={sensors}
+                        collisionDetection={closestCenter}
+                        onDragEnd={(event) => handleDragEnd(event, category.id)}
+                      >
+                        <SortableContext
+                          items={categoryJars.map(jar => jar.id)}
+                          strategy={horizontalListSortingStrategy}
+                        >
+                          <div className="flex gap-3 overflow-x-auto pb-2 -mx-2 px-2 scrollbar-thin scrollbar-thumb-primary scrollbar-track-transparent">
+                            {categoryJars.map(jar => {
+                              const progress = parseFloat(getProgress(jar));
+                              return (
+                                <SortableJarCard
+                                  key={jar.id}
+                                  jar={jar}
+                                  progress={progress}
+                                  darkMode={darkMode}
+                                  textColor={textColor}
+                                  textSecondary={textSecondary}
+                                  cardBg={cardBg}
+                                  onSelect={setSelectedJar}
+                                  onDelete={(jar) => {
+                                    setJarToDelete(jar);
+                                    setShowDeleteConfirm(true);
+                                  }}
+                                />
+                              );
+                            })}
+                          </div>
+                        </SortableContext>
+                      </DndContext>
                     </div>
                   );
                 })}
