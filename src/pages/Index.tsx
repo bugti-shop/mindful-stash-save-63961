@@ -716,11 +716,14 @@ const Index = () => {
                               </div>
                               <div className="text-center mb-2">
                                 <div
-                                  className={`text-base sm:text-lg font-bold ${
-                                    progress >= 75 ? 'text-green-600' :
-                                    progress >= 50 ? 'text-blue-600' :
-                                    progress >= 25 ? 'text-orange-600' : 'text-red-600'
-                                  }`}
+                                  className={`text-base sm:text-lg font-bold ${(() => {
+                                    // For debt jars, red for high debt, green for low
+                                    if (jar.purposeType === 'debt') {
+                                      return progress >= 75 ? 'text-red-600' : progress >= 50 ? 'text-orange-600' : progress >= 25 ? 'text-blue-600' : 'text-green-600';
+                                    }
+                                    // For saving jars, green for high savings, red for low
+                                    return progress >= 75 ? 'text-green-600' : progress >= 50 ? 'text-blue-600' : progress >= 25 ? 'text-orange-600' : 'text-red-600';
+                                  })()}`}
                                 >
                                   {progress}%
                                 </div>
@@ -793,15 +796,26 @@ const Index = () => {
                   jarId={selectedJar.id} 
                   isLarge={true} 
                   imageUrl={selectedJar.imageUrl}
+                  isDebtJar={selectedJar.purposeType === 'debt'}
                 />
               ) : (
-                <JarVisualization progress={parseFloat(getProgress(selectedJar))} jarId={selectedJar.id} isLarge={true} />
+                <JarVisualization 
+                  progress={parseFloat(getProgress(selectedJar))} 
+                  jarId={selectedJar.id} 
+                  isLarge={true}
+                  isDebtJar={selectedJar.purposeType === 'debt'}
+                />
               )}
             </div>
             <div className="text-center mb-4 sm:mb-6">
               <div
                 className={`text-3xl sm:text-4xl md:text-5xl font-bold ${(() => {
                   const p = parseFloat(getProgress(selectedJar));
+                  // For debt jars, reverse colors: red for high debt (high %), green for low debt (low %)
+                  if (selectedJar.purposeType === 'debt') {
+                    return p >= 75 ? 'text-red-600' : p >= 50 ? 'text-orange-600' : p >= 25 ? 'text-blue-600' : 'text-green-600';
+                  }
+                  // For saving jars, normal colors: green for high savings, red for low
                   return p >= 75 ? 'text-green-600' : p >= 50 ? 'text-blue-600' : p >= 25 ? 'text-orange-600' : 'text-red-600';
                 })()}`}
               >
@@ -852,7 +866,7 @@ const Index = () => {
                         darkMode ? 'bg-gray-700 text-white' : ''
                       }`}
                     />
-                    <SavingsButton onClick={addMoney} size="default" className="text-sm sm:text-base flex-1 whitespace-nowrap bg-red-500 hover:bg-red-600 text-white">
+                    <SavingsButton onClick={addMoney} size="default" className="text-sm sm:text-base flex-1 whitespace-nowrap bg-red-500 hover:bg-red-600 text-white shadow-[0_4px_0_#b91c1c] active:shadow-[0_2px_0_#991b1b]">
                       Add Debt
                     </SavingsButton>
                   </div>

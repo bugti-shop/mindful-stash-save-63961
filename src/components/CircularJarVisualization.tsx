@@ -35,11 +35,12 @@ const CircularJarVisualization = ({
     return circumference - (circumference * startPercent / 100);
   };
 
-  // For debt jars, reverse the gradient IDs: green->blue->orange->red
-  const firstGradient = isDebtJar ? 'green-gradient' : 'red-gradient';
-  const secondGradient = isDebtJar ? 'blue-gradient' : 'orange-gradient';
-  const thirdGradient = isDebtJar ? 'orange-gradient' : 'blue-gradient';
-  const fourthGradient = isDebtJar ? 'red-gradient' : 'green-gradient';
+  // For debt jars, show red at top (high debt) and green at bottom (paid off)
+  // Circular progress goes clockwise starting from top, so reverse to show red at end (top)
+  const firstGradient = isDebtJar ? 'green-gradient' : 'red-gradient';    // 0-25% (bottom/start)
+  const secondGradient = isDebtJar ? 'blue-gradient' : 'orange-gradient';  // 25-50%
+  const thirdGradient = isDebtJar ? 'orange-gradient' : 'blue-gradient';   // 50-75%
+  const fourthGradient = isDebtJar ? 'red-gradient' : 'green-gradient';    // 75-100% (top/end)
 
   return (
     <div className="relative w-full h-full flex items-center justify-center">

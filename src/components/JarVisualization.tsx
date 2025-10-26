@@ -20,11 +20,12 @@ const JarVisualization = ({ progress, jarId, isLarge = false, isDebtJar = false 
     ? "M 90 35 L 90 70 L 50 220 Q 45 250 45 270 Q 45 300 70 320 Q 95 332 140 332 Q 185 332 210 320 Q 235 300 235 270 Q 235 250 230 220 L 190 70 L 190 35 Q 190 28 185 28 L 95 28 Q 90 28 90 35 Z"
     : "M 90 30 L 90 60 L 50 200 Q 45 225 45 240 Q 45 265 70 280 Q 95 290 140 290 Q 185 290 210 280 Q 235 265 235 240 Q 235 225 230 200 L 190 60 L 190 30 Q 190 25 185 25 L 95 25 Q 90 25 90 30 Z";
 
-  // For debt jars, reverse the color scheme: green->blue->orange->red
-  const firstGradient = isDebtJar ? `g${jarId}` : `r${jarId}`;
+  // For debt jars, show red at top (high debt) and green at bottom (paid off)
+  // Since we paint from bottom to top, reverse the order
+  const firstGradient = isDebtJar ? `g${jarId}` : `r${jarId}`;   // bottom segment
   const secondGradient = isDebtJar ? `b${jarId}` : `o${jarId}`;
   const thirdGradient = isDebtJar ? `o${jarId}` : `b${jarId}`;
-  const fourthGradient = isDebtJar ? `r${jarId}` : `g${jarId}`;
+  const fourthGradient = isDebtJar ? `r${jarId}` : `g${jarId}`;  // top segment
 
   return (
     <svg viewBox={viewBox} className="w-full h-full drop-shadow-2xl">
