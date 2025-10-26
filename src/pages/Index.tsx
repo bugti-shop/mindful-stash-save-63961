@@ -230,11 +230,12 @@ const Index = () => {
     }
 
     if (newJar.name && newJar.target && categories.length > 0) {
+      const targetAmount = parseFloat(newJar.target);
       const jar: Jar = {
         id: Date.now(),
         name: newJar.name,
-        target: parseFloat(newJar.target),
-        saved: 0,
+        target: targetAmount,
+        saved: newJar.purposeType === 'debt' ? targetAmount : 0, // Debt jars start full
         streak: 0,
         withdrawn: 0,
         notes: [],
@@ -824,34 +825,71 @@ const Index = () => {
               </div>
             </div>
             <div className="space-y-3 mb-6">
-              <div className="flex gap-3 items-stretch">
-                <input
-                  type="number"
-                  placeholder={`Amount (${selectedJar.currency || '$'})`}
-                  value={addAmount}
-                  onChange={(e) => setAddAmount(e.target.value)}
-                  className={`w-[140px] px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base rounded-xl border-2 border-gray-300 focus:border-primary focus:outline-none ${
-                    darkMode ? 'bg-gray-700 text-white' : ''
-                  }`}
-                />
-                <SavingsButton onClick={addMoney} size="default" className="text-sm sm:text-base flex-1 whitespace-nowrap">
-                  Add
-                </SavingsButton>
-              </div>
-              <div className="flex gap-3 items-stretch">
-                <input
-                  type="number"
-                  placeholder={`Amount (${selectedJar.currency || '$'})`}
-                  value={withdrawAmount}
-                  onChange={(e) => setWithdrawAmount(e.target.value)}
-                  className={`w-[140px] px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base rounded-xl border-2 border-gray-300 focus:border-primary focus:outline-none ${
-                    darkMode ? 'bg-gray-700 text-white' : ''
-                  }`}
-                />
-                <SavingsButton onClick={withdrawMoney} variant="danger" size="default" className="text-sm sm:text-base flex-1 whitespace-nowrap">
-                  Withdraw
-                </SavingsButton>
-              </div>
+              {selectedJar.purposeType === 'debt' ? (
+                // Debt jar: Withdraw (Pay Off) first, Add Debt second
+                <>
+                  <div className="flex gap-3 items-stretch">
+                    <input
+                      type="number"
+                      placeholder={`Amount (${selectedJar.currency || '$'})`}
+                      value={withdrawAmount}
+                      onChange={(e) => setWithdrawAmount(e.target.value)}
+                      className={`w-[140px] px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base rounded-xl border-2 border-gray-300 focus:border-primary focus:outline-none ${
+                        darkMode ? 'bg-gray-700 text-white' : ''
+                      }`}
+                    />
+                    <SavingsButton onClick={withdrawMoney} size="default" className="text-sm sm:text-base flex-1 whitespace-nowrap bg-blue-500 hover:bg-blue-600 text-white">
+                      Pay Off
+                    </SavingsButton>
+                  </div>
+                  <div className="flex gap-3 items-stretch">
+                    <input
+                      type="number"
+                      placeholder={`Amount (${selectedJar.currency || '$'})`}
+                      value={addAmount}
+                      onChange={(e) => setAddAmount(e.target.value)}
+                      className={`w-[140px] px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base rounded-xl border-2 border-gray-300 focus:border-primary focus:outline-none ${
+                        darkMode ? 'bg-gray-700 text-white' : ''
+                      }`}
+                    />
+                    <SavingsButton onClick={addMoney} size="default" className="text-sm sm:text-base flex-1 whitespace-nowrap bg-red-500 hover:bg-red-600 text-white">
+                      Add Debt
+                    </SavingsButton>
+                  </div>
+                </>
+              ) : (
+                // Saving jar: Add first, Withdraw second
+                <>
+                  <div className="flex gap-3 items-stretch">
+                    <input
+                      type="number"
+                      placeholder={`Amount (${selectedJar.currency || '$'})`}
+                      value={addAmount}
+                      onChange={(e) => setAddAmount(e.target.value)}
+                      className={`w-[140px] px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base rounded-xl border-2 border-gray-300 focus:border-primary focus:outline-none ${
+                        darkMode ? 'bg-gray-700 text-white' : ''
+                      }`}
+                    />
+                    <SavingsButton onClick={addMoney} size="default" className="text-sm sm:text-base flex-1 whitespace-nowrap">
+                      Add
+                    </SavingsButton>
+                  </div>
+                  <div className="flex gap-3 items-stretch">
+                    <input
+                      type="number"
+                      placeholder={`Amount (${selectedJar.currency || '$'})`}
+                      value={withdrawAmount}
+                      onChange={(e) => setWithdrawAmount(e.target.value)}
+                      className={`w-[140px] px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base rounded-xl border-2 border-gray-300 focus:border-primary focus:outline-none ${
+                        darkMode ? 'bg-gray-700 text-white' : ''
+                      }`}
+                    />
+                    <SavingsButton onClick={withdrawMoney} variant="danger" size="default" className="text-sm sm:text-base flex-1 whitespace-nowrap">
+                      Withdraw
+                    </SavingsButton>
+                  </div>
+                </>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-3 mb-6">
