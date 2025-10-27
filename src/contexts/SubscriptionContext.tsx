@@ -27,44 +27,23 @@ const FREE_LIMITS = {
 };
 
 export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
-  const [tier, setTier] = useState<SubscriptionTier>('free');
+  const [tier] = useState<SubscriptionTier>('premium'); // Always premium - app is free
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-
-  useEffect(() => {
-    // Check stored subscription status
-    const storedTier = localStorage.getItem('subscription_tier') as SubscriptionTier;
-    if (storedTier) {
-      setTier(storedTier);
-    }
-  }, []);
 
   const purchaseMonthly = async () => {
     try {
       setIsLoading(true);
       
-      // TODO: Integrate with Google Play Billing
-      // This is a placeholder implementation
-      // Replace with actual Google Play billing integration using:
-      // cordova-plugin-purchase or native Android billing library
-      
-      // Simulate purchase process
+      // App is now free - no purchase needed
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      setTier('premium');
-      localStorage.setItem('subscription_tier', 'premium');
-      
       toast({
-        title: 'Purchase Successful!',
-        description: 'Welcome to Premium! Enjoy all features.',
+        title: 'App is Free!',
+        description: 'All features are now available to everyone.',
       });
     } catch (error) {
       console.error('Purchase error:', error);
-      toast({
-        title: 'Purchase Failed',
-        description: 'Unable to complete purchase. Please try again.',
-        variant: 'destructive',
-      });
     } finally {
       setIsLoading(false);
     }
@@ -74,26 +53,15 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
     try {
       setIsLoading(true);
       
-      // TODO: Integrate with Google Play Billing
-      // This is a placeholder implementation
-      
-      // Simulate purchase process
+      // App is now free - no purchase needed
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      setTier('premium');
-      localStorage.setItem('subscription_tier', 'premium');
-      
       toast({
-        title: 'Purchase Successful!',
-        description: 'Welcome to Premium! Enjoy all features for a year!',
+        title: 'App is Free!',
+        description: 'All features are now available to everyone.',
       });
     } catch (error) {
       console.error('Purchase error:', error);
-      toast({
-        title: 'Purchase Failed',
-        description: 'Unable to complete purchase. Please try again.',
-        variant: 'destructive',
-      });
     } finally {
       setIsLoading(false);
     }
@@ -125,8 +93,7 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const canUseFeature = (feature: string): boolean => {
-    if (tier === 'premium') return true;
-    return false;
+    return true; // All features are free
   };
 
   return (

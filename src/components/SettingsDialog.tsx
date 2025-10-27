@@ -8,8 +8,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from './ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { PremiumSettings } from './PremiumSettings';
 import { NotificationSettings } from './NotificationSettings';
 import { ScrollArea } from './ui/scroll-area';
 
@@ -28,22 +26,13 @@ export const SettingsDialog = () => {
             Manage your app preferences and subscription
           </DialogDescription>
         </DialogHeader>
-        <Tabs defaultValue="premium" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="premium">Premium</TabsTrigger>
-            <TabsTrigger value="notifications">Notifications</TabsTrigger>
-          </TabsList>
-          <ScrollArea className="h-[500px] pr-4">
-            <TabsContent value="premium" className="mt-4">
-              <PremiumSettings />
-            </TabsContent>
-            <TabsContent value="notifications" className="mt-4 space-y-4">
-              <div className="rounded-lg border p-4">
-                <NotificationSettings />
-              </div>
-            </TabsContent>
-          </ScrollArea>
-        </Tabs>
+        <ScrollArea className="h-[500px] pr-4">
+          <div className="mt-4 space-y-4">
+            <div className="rounded-lg border p-4">
+              <NotificationSettings />
+            </div>
+          </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
